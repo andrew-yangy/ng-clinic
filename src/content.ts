@@ -1,17 +1,26 @@
-import {MessageType} from "./message";
+const scriptInjection = new Set<string>();
 
-chrome.runtime.onMessage.addListener(
-  function(request, sender, sendResponse) {
-    if( request.message === "clicked_browser_action" ) {
+const inject = (fn: (element: HTMLScriptElement) => void) => {
+    const script = document.createElement('script');
+    console.log(script);
+    fn(script);
+    document.documentElement.appendChild(script);
+    script.parentNode.removeChild(script);
+};
 
-      console.log(request);
+const injectScript = (path: string) => {
+    if (scriptInjection.has(path)) {
+        return;
     }
-  }
-);
-console.log(document);
-if (document instanceof HTMLDocument) {
-    chrome.runtime.sendMessage(MessageType.Initialize)
-}
+    console.log(chrome.extension.getURL(path));
+    inject(script => {
+        script.src = chrome.extension.getURL(path);
+    });
+
+    scriptInjection.add(path);
+};
+
+injectScript('core.js');
 // let [root] = window.getAllAngularRootElements();
 // let appRoot = ng.probe(root);
 // let [rootComponent] = appRoot.injector.get(ng.coreTokens.ApplicationRef).components;

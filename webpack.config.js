@@ -1,9 +1,12 @@
 const path = require('path');
+const CopyPlugin = require('copy-webpack-plugin');
 
 module.exports = {
+  mode:'development',
   entry: {
-    'content': ['./src/content'],
-    'background': ['./src/background']
+    content: './src/content',
+    core: './src/core',
+    background: './src/background'
   },
   devtool: 'source-map',
   cache: true,
@@ -22,5 +25,10 @@ module.exports = {
   output: {
     filename: '[name].js',
     path: path.resolve(__dirname, 'dist')
-  }
+  },
+  plugins: [
+    new CopyPlugin([
+      { from: 'manifest.json', to: 'manifest.json' },
+    ]),
+  ]
 };
