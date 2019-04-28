@@ -2,7 +2,6 @@ const scriptInjection = new Set<string>();
 
 const inject = (fn: (element: HTMLScriptElement) => void) => {
     const script = document.createElement('script');
-    console.log(script);
     fn(script);
     document.documentElement.appendChild(script);
     script.parentNode.removeChild(script);
@@ -12,7 +11,7 @@ const injectScript = (path: string) => {
     if (scriptInjection.has(path)) {
         return;
     }
-    console.log(chrome.extension.getURL(path));
+
     inject(script => {
         script.src = chrome.extension.getURL(path);
     });
